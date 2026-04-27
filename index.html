@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fdf7ee">
+<title>inkpetal 🌸</title>
+<link rel="manifest" href="#"> 
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Klee+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fdf7ee;
+  --bg2: #fff9f0;
+  --paper: #fffdf6;
+  --ink: #3d2b0e;
+  --accent: #b5541a;
+  --accent2: #e8a020;
+  --border: #e0c88a;
+  --muted: #b08030;
+  --dot: #d4b89640;
+}
+.theme-sky    { --bg:#eef6fc; --bg2:#f5faff; --paper:#f8fcff; --ink:#1a3a5c; --accent:#2a7ab5; --accent2:#5aaced; --border:#a8d0f0; --muted:#5080a0; --dot:#a8d0f040; }
+.theme-garden { --bg:#edf7e8; --bg2:#f5fdf0; --paper:#f8fff4; --ink:#1a3a1a; --accent:#3a8a3a; --accent2:#70c050; --border:#a0d890; --muted:#4a8040; --dot:#a0d89040; }
+.theme-sakura { --bg:#fdf0f8; --bg2:#fff5fc; --paper:#fffafd; --ink:#4a1a3a; --accent:#c0408a; --accent2:#e880c0; --border:#e0a0d0; --muted:#a04080; --dot:#e0a0d040; }
+.theme-midnight { --bg:#12111e; --bg2:#1a1830; --paper:#1e1c2e; --ink:#e8e0f8; --accent:#a080f0; --accent2:#d0b0ff; --border:#3a3060; --muted:#8070c0; --dot:#3a306060; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Klee One', cursive;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.4s, color 0.4s;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--bg2);
+  border-bottom: 2px dashed var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+  transition: background 0.4s, border-color 0.4s;
+}
+.logo {
+  font-family: 'Caveat', cursive;
+  font-size: 26px; font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+.logo span { color: var(--accent2); }
+.header-right { display: flex; gap: 8px; align-items: center; }
+.hbtn {
+  font-family: 'Klee One', cursive;
+  font-size: 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.hbtn:hover { background: var(--bg); }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── HOME / ENTRIES LIST ── */
+.home-wrap { padding: 16px; max-width: 700px; margin: 0 auto; }
+.entries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+.entry-card {
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  position: relative;
+  box-shadow: 3px 3px 0 var(--border);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: popIn 0.25s ease;
+}
+.entry-card:hover { transform: translateY(-2px) rotate(0.3deg); box-shadow: 5px 5px 0 var(--border); }
+@keyframes popIn { from { opacity:0; transform:scale(0.93); } to { opacity:1; transform:scale(1); } }
+.card-tape {
+  position: absolute; top: -9px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 52px; height: 18px;
+  background: rgba(255,220,100,0.55);
+  border-radius: 3px;
+}
+.card-date { font-family:'Caveat',cursive; font-size:13px; color:var(--muted); margin-bottom:6px; }
+.card-text { font-size:15px; color:var(--ink); line-height:1.65; max-height:80px; overflow:hidden; }
+.card-mood { display:inline-block; font-size:12px; padding:2px 10px; border-radius:12px; margin-top:8px; background:var(--bg); border:1px solid var(--border); color:var(--muted); }
+.card-thumb { width:100%; height:90px; object-fit:cover; border-radius:8px; margin-top:10px; border:2px solid white; box-shadow:1px 1px 3px rgba(0,0,0,0.1); transform:rotate(-1deg); }
+.card-actions { display:flex; gap:8px; margin-top:10px; border-top:1px dashed var(--border); padding-top:8px; }
+.card-btn { background:none; border:none; cursor:pointer; font-size:16px; opacity:0.5; transition:opacity 0.15s, transform 0.15s; }
+.card-btn:hover { opacity:1; transform:scale(1.2); }
+
+.empty-home { text-align:center; padding:60px 20px; grid-column:1/-1; }
+.empty-home .bigmoji { font-size:56px; margin-bottom:12px; }
+.empty-home p { font-family:'Caveat',cursive; font-size:22px; color:var(--muted); }
+.empty-home small { font-size:14px; color:var(--muted); opacity:0.7; margin-top:6px; display:block; }
+
+.fab {
+  position: fixed; bottom: 24px; right: 20px;
+  width: 54px; height: 54px;
+  border-radius: 50%; background: var(--accent);
+  color: white; font-size: 28px;
+  border: none; cursor: pointer; z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 2px 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.2s, background 0.2s;
+}
+.fab:hover { transform: rotate(45deg) scale(1.05); }
+.fab.spin { transform: rotate(45deg); background: #cc2020; }
+
+/* ── EDITOR ── */
+.editor-wrap { display:flex; flex-direction:column; height:calc(100vh - 52px); }
+
+.theme-bar {
+  display: flex; gap: 7px; align-items: center;
+  padding: 8px 14px; background: var(--bg2);
+  border-bottom: 1px dashed var(--border);
+  overflow-x: auto; scrollbar-width: none;
+  transition: background 0.4s;
+}
+.theme-bar::-webkit-scrollbar { display:none; }
+.tdot {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  flex-shrink: 0; transition: transform 0.15s, border-color 0.15s;
+}
+.tdot:hover { transform:scale(1.15); }
+.tdot.on { border-color: var(--accent); transform:scale(1.2); }
+.theme-label { font-family:'Caveat',cursive; font-size:12px; color:var(--muted); white-space:nowrap; }
+
+.canvas-area {
+  flex: 1; position: relative; overflow: auto;
+  background: var(--paper);
+  background-image: radial-gradient(circle, var(--dot) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  min-height: 500px;
+  transition: background-color 0.4s;
+}
+
+/* draggable items on canvas */
+.canvas-item {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  z-index: 10;
+}
+.canvas-item:active { cursor: grabbing; z-index: 50; }
+.canvas-item.selected { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+.sticky-note {
+  padding: 10px 12px;
+  font-family: 'Caveat', cursive;
+  font-size: 15px; line-height: 1.55;
+  border-radius: 4px;
+  min-width: 110px; min-height: 80px;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.12);
+  resize: both; overflow: auto;
+  outline: none;
+}
+.sticky-note[contenteditable="true"]:focus { box-shadow: 2px 3px 0 rgba(0,0,0,0.2), 0 0 0 2px var(--accent); }
+
+.polaroid-frame {
+  background: white;
+  padding: 6px 6px 22px;
+  border: 1px solid #ddd;
+  box-shadow: 2px 3px 6px rgba(0,0,0,0.13);
+  border-radius: 2px;
+  text-align: center;
+}
+.polaroid-frame img { display:block; max-width:140px; max-height:120px; object-fit:cover; }
+.polaroid-caption { font-family:'Caveat',cursive; font-size:12px; color:#888; margin-top:4px; }
+
+.sticker-el { font-size: 32px; line-height:1; cursor:grab; }
+
+.washi-el {
+  height: 18px; border-radius: 2px;
+  width: 120px; opacity: 0.75;
+}
+
+.text-el {
+  font-family: 'Caveat', cursive;
+  font-size: 17px; color: var(--ink);
+  line-height: 1.65;
+  min-width: 80px; min-height: 30px;
+  padding: 4px 6px;
+  outline: none;
+  background: transparent;
+}
+
+.del-item {
+  position:absolute; top:-8px; right:-8px;
+  width:20px; height:20px; border-radius:50%;
+  background:#cc2020; color:white; border:none;
+  font-size:12px; cursor:pointer; z-index:60;
+  display:none; align-items:center; justify-content:center;
+  line-height:1;
+}
+.canvas-item.selected .del-item { display:flex; }
+
+/* ── MAIN TEXTAREA (writing area) ── */
+.write-area {
+  position: absolute;
+  top: 16px; left: 16px; right: 16px;
+  min-height: 120px;
+  font-family: 'Caveat', cursive;
+  font-size: 18px; color: var(--ink);
+  line-height: 1.8;
+  background: transparent;
+  border: none; outline: none;
+  resize: none;
+  z-index: 5;
+  transition: color 0.4s;
+}
+.write-area::placeholder { color: var(--muted); opacity: 0.6; }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  background: var(--bg2);
+  border-top: 1.5px dashed var(--border);
+  padding: 10px 12px;
+  display: flex; gap: 8px; align-items: center;
+  flex-wrap: wrap;
+  transition: background 0.4s;
+}
+.tbtn {
+  font-family: 'Klee One', cursive;
+  font-size: 13px;
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 6px 12px;
+  color: var(--accent);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: background 0.15s, transform 0.15s;
+  white-space: nowrap;
+}
+.tbtn:hover { background: var(--bg); transform: scale(1.03); }
+.tbtn:active { transform: scale(0.97); }
+
+.mic-btn {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--accent); border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-left: auto;
+  transition: background 0.15s, transform 0.15s;
+  box-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+}
+.mic-btn:hover { background: var(--accent2); }
+.mic-btn.rec { background: #cc2020; animation: micpulse 0.8s infinite; }
+@keyframes micpulse {
+  0%,100% { transform:scale(1); box-shadow:0 0 0 0 rgba(204,32,32,0.5); }
+  50% { transform:scale(1.08); box-shadow:0 0 0 8px rgba(204,32,32,0); }
+}
+.mic-btn svg { width:20px; height:20px; fill:white; }
+
+/* ── PANELS (sticker picker, etc.) ── */
+.panel-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+  z-index: 400; display: none; align-items: flex-end;
+}
+.panel-overlay.open { display: flex; }
+.panel {
+  background: var(--bg2);
+  border-radius: 20px 20px 0 0;
+  padding: 16px;
+  width: 100%; max-height: 55vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+  transition: background 0.4s;
+}
+@keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+.panel-title { font-family:'Caveat',cursive; font-size:18px; color:var(--accent); margin-bottom:12px; display:flex; justify-content:space-between; }
+.panel-close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--muted); }
+
+.sticker-grid { display:flex; flex-wrap:wrap; gap:10px; }
+.spick { font-size:28px; cursor:pointer; transition:transform 0.15s; border-radius:8px; padding:4px; }
+.spick:hover { transform:scale(1.3); background:var(--bg); }
+
+.sticky-colors { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.scolor { width:40px; height:40px; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:transform 0.15s, border-color 0.15s; }
+.scolor:hover { transform:scale(1.1); border-color: var(--accent); }
+
+.washi-options { display:flex; gap:10px; flex-wrap:wrap; }
+.washi-pick { height:28px; border-radius:4px; width:100px; cursor:pointer; opacity:0.8; border:2px solid transparent; transition:transform 0.15s; }
+.washi-pick:hover { transform:scale(1.05); border-color:var(--accent); }
+
+/* ── TRANSCRIPT ── */
+.transcript { font-family:'Caveat',cursive; font-size:13px; color:var(--accent2); padding:4px 14px 0; min-height:18px; font-style:italic; }
+
+/* ── MOOD SELECTOR ── */
+.mood-row { display:flex; gap:8px; padding:8px 14px; background:var(--bg2); border-bottom:1px dashed var(--border); overflow-x:auto; scrollbar-width:none; }
+.mood-row::-webkit-scrollbar { display:none; }
+.mbtn { font-family:'Klee One',cursive; font-size:12px; padding:4px 12px; border-radius:14px; border:1.5px solid var(--border); background:var(--paper); color:var(--muted); cursor:pointer; white-space:nowrap; transition:all 0.15s; }
+.mbtn.on { background:var(--accent); color:white; border-color:var(--accent); }
+
+/* ── SAVE BAR ── */
+.save-bar { display:flex; gap:10px; padding:8px 14px; background:var(--bg2); border-top:1px solid var(--border); align-items:center; }
+.save-bar input { flex:1; font-family:'Caveat',cursive; font-size:16px; border:1.5px dashed var(--border); border-radius:8px; padding:6px 10px; background:var(--paper); color:var(--ink); outline:none; }
+.save-bar input::placeholder { color:var(--muted); opacity:0.7; }
+.save-btn { font-family:'Klee One',cursive; background:var(--accent); color:white; border:none; border-radius:20px; padding:8px 20px; font-size:14px; cursor:pointer; transition:background 0.15s; white-space:nowrap; }
+.save-btn:hover { background:var(--accent2); }
+
+/* hidden file input */
+#photoInput, #bgPhotoInput { display:none; }
+
+.live-badge {
+  font-size:11px; background:#cc2020; color:white;
+  border-radius:8px; padding:2px 7px; margin-left:6px;
+  animation:blink 1s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">ink<span>petal</span> 🌸</div>
+  <div class="header-right">
+    <button class="hbtn" onclick="showView('home')">📖 entries</button>
+    <button class="hbtn" onclick="newEntry()">+ new</button>
+  </div>
+</div>
+
+<!-- HOME VIEW -->
+<div id="view-home" class="view active">
+  <div class="home-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div style="font-family:'Caveat',cursive;font-size:22px;color:var(--accent);">my journal ✨</div>
+      <button class="hbtn" onclick="exportAll()">📄 export</button>
+    </div>
+    <div class="entries-grid" id="entries-grid">
+      <div class="empty-home">
+        <div class="bigmoji">📖</div>
+        <p>your journal is empty!</p>
+        <small>tap + new to write your first entry 🌸</small>
+      </div>
+    </div>
+  </div>
+  <button class="fab" onclick="newEntry()">+</button>
+</div>
+
+<!-- EDITOR VIEW -->
+<div id="view-editor" class="view">
+  <div class="editor-wrap">
+
+    <div class="theme-bar">
+      <span class="theme-label">theme:</span>
+      <div class="tdot on" style="background:#fdf7ee;" onclick="setTheme('',this)" title="Cream"></div>
+      <div class="tdot" style="background:#eef6fc;" onclick="setTheme('theme-sky',this)" title="Sky"></div>
+      <div class="tdot" style="background:#edf7e8;" onclick="setTheme('theme-garden',this)" title="Garden"></div>
+      <div class="tdot" style="background:#fdf0f8;" onclick="setTheme('theme-sakura',this)" title="Sakura"></div>
+      <div class="tdot" style="background:#12111e;" onclick="setTheme('theme-midnight',this)" title="Midnight"></div>
+    </div>
+
+    <div class="mood-row" id="mood-row">
+      <span style="font-family:'Caveat',cursive;font-size:13px;color:var(--muted);line-height:26px;margin-right:2px;">mood:</span>
+      <button class="mbtn" onclick="setMood('😊 happy',this)">😊 happy</button>
+      <button class="mbtn" onclick="setMood('😌 calm',this)">😌 calm</button>
+      <button class="mbtn" onclick="setMood('🥺 emotional',this)">🥺 emotional</button>
+      <button class="mbtn" onclick="setMood('🎉 excited',this)">🎉 excited</button>
+      <button class="mbtn" onclick="setMood('🤔 reflective',this)">🤔 reflective</button>
+      <button class="mbtn" onclick="setMood('😴 tired',this)">😴 tired</button>
+      <button class="mbtn" onclick="setMood('💛 grateful',this)">💛 grateful</button>
+    </div>
+
+    <div class="canvas-area" id="canvas" onclick="canvasClick(event)">
+      <textarea class="write-area" id="write-area" placeholder="start writing here... tap the mic and speak in Telugu, English, Tenglish — anything! 🌸" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="transcript" id="transcript"></div>
+
+    <div class="toolbar">
+      <button class="tbtn" onclick="openPanel('stickers')">🌸 stickers</button>
+      <button class="tbtn" onclick="openPanel('sticky')">📌 sticky</button>
+      <button class="tbtn" onclick="openPanel('washi')">🎀 washi</button>
+      <button class="tbtn" onclick="document.getElementById('photoInput').click()">📷 photo</button>
+      <button class="tbtn" onclick="addTextBlock()">✏️ text</button>
+      <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
+        <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.06 7.44-7 7.93V20h4v2H8v-2h4v-2.07z"/></svg>
+      </button>
+    </div>
+
+    <div class="save-bar">
+      <input type="text" id="entry-title" placeholder="entry title (optional)...">
+      <button class="save-btn" onclick="saveEntry()">save 🌸</button>
+    </div>
+
+  </div>
+</div>
+
+<input type="file" id="photoInput" accept="image/*" onchange="addPhoto(this)">
+
+<!-- STICKER PANEL -->
+<div class="panel-overlay" id="panel-stickers" onclick="closePanels(event)">
+  <div class="panel">
+    <div class="panel-title">stickers <button class="panel-close" onclick="closeAllPanels()">✕</button></div>
+    <div class="sticker-grid" id="sticker-grid"></div>
+  </div>
+</div>
+
+<!-- STICKY PANEL -->
+<div class="panel-overlay" id="panel-sticky" onclick="closePanels(event)">
+  <div class="panel">
+    <div class="panel-title">sticky note <button class="panel-close" onclick="closeAllPanels()">✕</button></div>
+    <div class="sticky-colors" id="sticky-colors"></div>
+    <button class="tbtn" style="margin-top:4px;" onclick="addSticky()">+ add sticky note</button>
+  </div>
+</div>
+
+<!-- WASHI PANEL -->
+<div class="panel-overlay" id="panel-washi" onclick="closePanels(event)">
+  <div class="panel">
+    <div class="panel-title">washi tape <button class="panel-close" onclick="closeAllPanels()">✕</button></div>
+    <div class="washi-options" id="washi-options"></div>
+  </div>
+</div>
+
+<script>
+const STICKERS = ['🌸','🌺','🌻','🌹','🌷','🌼','💐','🍀','🌿','🍃','🌱','🌙','⭐','✨','💫','🌟','☀️','🌈','☁️','🦋','🐝','🐞','🦄','🐱','🐰','🍓','🍊','🍋','🍉','🍇','🎵','🎶','🎀','🎁','💌','📚','☕','🧸','💛','💜','💙','❤️','🤍','🖊️','📷','🏔️','🌊','🌴','🍵','🧁'];
+
+const STICKY_COLORS = [
+  {bg:'#fff7a0',color:'#7a6000',name:'yellow'},
+  {bg:'#ffd6e8',color:'#8a2050',name:'pink'},
+  {bg:'#c8e8ff',color:'#1a4880',name:'blue'},
+  {bg:'#d8f8d0',color:'#206020',name:'green'},
+  {bg:'#ffe0c0',color:'#804010',name:'peach'},
+  {bg:'#e8d8f8',color:'#4a2080',name:'lavender'},
+];
+
+const WASHI = [
+  {style:'repeating-linear-gradient(45deg,#f9c8a0,#f9c8a0 4px,#fbe0c8 4px,#fbe0c8 8px)',name:'orange stripes'},
+  {style:'repeating-linear-gradient(90deg,#c8e8ff,#c8e8ff 6px,#e8f4ff 6px,#e8f4ff 12px)',name:'blue checks'},
+  {style:'repeating-linear-gradient(45deg,#f8c8e0,#f8c8e0 4px,#fff0f8 4px,#fff0f8 8px)',name:'pink stripes'},
+  {style:'repeating-linear-gradient(90deg,#d0f8a0,#d0f8a0 6px,#f0fff0 6px,#f0fff0 10px)',name:'green'},
+  {style:'repeating-linear-gradient(45deg,#fffaaa,#fffaaa 4px,#fffff0 4px,#fffff0 8px)',name:'yellow'},
+  {style:'repeating-linear-gradient(90deg,#d8c8f8,#d8c8f8 5px,#f0eaff 5px,#f0eaff 10px)',name:'purple'},
+];
+
+let entries = JSON.parse(localStorage.getItem('inkpetal_entries') || '[]');
+let currentEntry = null;
+let currentMood = '';
+let currentTheme = '';
+let selectedColor = STICKY_COLORS[0];
+let recognition = null;
+let isRecording = false;
+let dragItem = null, dragOffX = 0, dragOffY = 0;
+
+// build panels
+function buildPanels() {
+  const sg = document.getElementById('sticker-grid');
+  sg.innerHTML = STICKERS.map(s => `<span class="spick" onclick="addSticker('${s}')">${s}</span>`).join('');
+  const sc = document.getElementById('sticky-colors');
+  sc.innerHTML = STICKY_COLORS.map((c,i) => `<div class="scolor" style="background:${c.bg};border-color:${i===0?'var(--accent)':'transparent'}" onclick="selectStickyColor(${i},this)"></div>`).join('');
+  const wo = document.getElementById('washi-options');
+  wo.innerHTML = WASHI.map((w,i) => `<div class="washi-pick" style="background:${w.style}" onclick="addWashi(${i})" title="${w.name}"></div>`).join('');
+}
+buildPanels();
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+function newEntry() {
+  currentEntry = null;
+  currentMood = '';
+  currentTheme = '';
+  document.getElementById('write-area').value = '';
+  document.getElementById('entry-title').value = '';
+  document.getElementById('transcript').textContent = '';
+  document.querySelectorAll('.mbtn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.tdot').forEach((d,i) => d.classList.toggle('on', i===0));
+  setTheme('', document.querySelectorAll('.tdot')[0]);
+  const canvas = document.getElementById('canvas');
+  canvas.querySelectorAll('.canvas-item').forEach(el => el.remove());
+  autoResize(document.getElementById('write-area'));
+  showView('editor');
+}
+
+function editEntry(id) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  currentEntry = e;
+  document.getElementById('write-area').value = e.text || '';
+  document.getElementById('entry-title').value = e.title || '';
+  currentMood = e.mood || '';
+  currentTheme = e.theme || '';
+  document.querySelectorAll('.mbtn').forEach(b => b.classList.toggle('on', b.textContent.trim() === currentMood));
+  const themes = ['','theme-sky','theme-garden','theme-sakura','theme-midnight'];
+  document.querySelectorAll('.tdot').forEach((d,i) => d.classList.toggle('on', themes[i] === currentTheme));
+  document.body.className = currentTheme;
+  const canvas = document.getElementById('canvas');
+  canvas.querySelectorAll('.canvas-item').forEach(el => el.remove());
+  if (e.canvasItems) e.canvasItems.forEach(item => restoreItem(item));
+  autoResize(document.getElementById('write-area'));
+  showView('editor');
+}
+
+function setTheme(cls, el) {
+  document.body.className = cls;
+  currentTheme = cls;
+  document.querySelectorAll('.tdot').forEach(d => d.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function setMood(mood, el) {
+  if (currentMood === mood) { currentMood = ''; el.classList.remove('on'); return; }
+  document.querySelectorAll('.mbtn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  currentMood = mood;
+}
+
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.max(120, ta.scrollHeight) + 'px';
+}
+
+// ── CANVAS ITEMS ──
+function makeItem(type, x, y) {
+  const div = document.createElement('div');
+  div.className = 'canvas-item';
+  div.dataset.type = type;
+  div.style.left = x + 'px';
+  div.style.top = y + 'px';
+  const del = document.createElement('button');
+  del.className = 'del-item';
+  del.textContent = '✕';
+  del.onclick = (e) => { e.stopPropagation(); div.remove(); };
+  div.appendChild(del);
+  div.addEventListener('pointerdown', startDrag);
+  div.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.canvas-item').forEach(i => i.classList.remove('selected'));
+    div.classList.add('selected');
+  });
+  return div;
+}
+
+function addSticker(emoji) {
+  closeAllPanels();
+  const canvas = document.getElementById('canvas');
+  const rect = canvas.getBoundingClientRect();
+  const x = 40 + Math.random() * (rect.width - 120);
+  const y = parseInt(document.getElementById('write-area').style.height || 120) + 20 + Math.random() * 80;
+  const div = makeItem('sticker', x, y);
+  div.dataset.value = emoji;
+  const el = document.createElement('span');
+  el.className = 'sticker-el';
+  el.textContent = emoji;
+  div.appendChild(el);
+  canvas.appendChild(div);
+}
+
+function addSticky() {
+  closeAllPanels();
+  const canvas = document.getElementById('canvas');
+  const rect = canvas.getBoundingClientRect();
+  const x = 20 + Math.random() * (rect.width - 160);
+  const y = parseInt(document.getElementById('write-area').style.height || 120) + 10 + Math.random() * 60;
+  const div = makeItem('sticky', x, y);
+  div.dataset.bg = selectedColor.bg;
+  div.dataset.color = selectedColor.color;
+  div.style.transform = `rotate(${(Math.random()-0.5)*6}deg)`;
+  const note = document.createElement('div');
+  note.className = 'sticky-note';
+  note.style.background = selectedColor.bg;
+  note.style.color = selectedColor.color;
+  note.contentEditable = 'true';
+  note.textContent = 'write here...';
+  note.onclick = (e) => { e.stopPropagation(); note.focus(); };
+  note.onfocus = () => { note.textContent === 'write here...' && (note.textContent = ''); };
+  div.appendChild(note);
+  canvas.appendChild(div);
+}
+
+function selectStickyColor(i, el) {
+  selectedColor = STICKY_COLORS[i];
+  document.querySelectorAll('.scolor').forEach((s,j) => s.style.borderColor = j===i ? 'var(--accent)' : 'transparent');
+}
+
+function addWashi(i) {
+  closeAllPanels();
+  const canvas = document.getElementById('canvas');
+  const rect = canvas.getBoundingClientRect();
+  const y = parseInt(document.getElementById('write-area').style.height || 120) + 20 + Math.random() * 100;
+  const div = makeItem('washi', 0, y);
+  div.dataset.washiIdx = i;
+  div.style.left = '0';
+  const el = document.createElement('div');
+  el.className = 'washi-el';
+  el.style.width = rect.width + 'px';
+  el.style.background = WASHI[i].style;
+  div.appendChild(el);
+  canvas.appendChild(div);
+}
+
+function addPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const canvas = document.getElementById('canvas');
+    const rect = canvas.getBoundingClientRect();
+    const x = 30 + Math.random() * (rect.width - 180);
+    const y = parseInt(document.getElementById('write-area').style.height || 120) + 20;
+    const div = makeItem('photo', x, y);
+    div.dataset.src = e.target.result;
+    div.style.transform = `rotate(${(Math.random()-0.5)*8}deg)`;
+    const frame = document.createElement('div');
+    frame.className = 'polaroid-frame';
+    const img = document.createElement('img');
+    img.src = e.target.result;
+    img.style.maxWidth = '140px'; img.style.maxHeight = '120px'; img.style.display = 'block';
+    const cap = document.createElement('div');
+    cap.className = 'polaroid-caption';
+    cap.contentEditable = 'true';
+    cap.textContent = 'caption...';
+    cap.onfocus = () => { cap.textContent === 'caption...' && (cap.textContent = ''); };
+    cap.onclick = (e) => e.stopPropagation();
+    frame.appendChild(img); frame.appendChild(cap);
+    div.appendChild(frame);
+    canvas.appendChild(div);
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function addTextBlock() {
+  const canvas = document.getElementById('canvas');
+  const rect = canvas.getBoundingClientRect();
+  const x = 20 + Math.random() * (rect.width - 160);
+  const y = parseInt(document.getElementById('write-area').style.height || 120) + 40;
+  const div = makeItem('text', x, y);
+  const el = document.createElement('div');
+  el.className = 'text-el';
+  el.contentEditable = 'true';
+  el.textContent = 'type here...';
+  el.onfocus = () => { el.textContent === 'type here...' && (el.textContent = ''); };
+  el.onclick = (e) => e.stopPropagation();
+  div.appendChild(el);
+  canvas.appendChild(div);
+  setTimeout(() => el.focus(), 50);
+}
+
+function canvasClick(e) {
+  if (e.target === document.getElementById('canvas') || e.target === document.getElementById('write-area')) {
+    document.querySelectorAll('.canvas-item').forEach(i => i.classList.remove('selected'));
+  }
+}
+
+// ── DRAG ──
+function startDrag(e) {
+  if (e.target.classList.contains('del-item') || e.target.contentEditable === 'true') return;
+  dragItem = e.currentTarget;
+  const rect = dragItem.getBoundingClientRect();
+  const canvas = document.getElementById('canvas').getBoundingClientRect();
+  dragOffX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  dragOffY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  document.addEventListener('pointermove', onDrag);
+  document.addEventListener('pointerup', stopDrag);
+  e.preventDefault();
+}
+function onDrag(e) {
+  if (!dragItem) return;
+  const canvas = document.getElementById('canvas');
+  const cr = canvas.getBoundingClientRect();
+  const cx = (e.touches ? e.touches[0].clientX : e.clientX) - cr.left - dragOffX + canvas.scrollLeft;
+  const cy = (e.touches ? e.touches[0].clientY : e.clientY) - cr.top - dragOffY + canvas.scrollTop;
+  dragItem.style.left = Math.max(0, cx) + 'px';
+  dragItem.style.top = Math.max(0, cy) + 'px';
+}
+function stopDrag() {
+  dragItem = null;
+  document.removeEventListener('pointermove', onDrag);
+  document.removeEventListener('pointerup', stopDrag);
+}
+
+// ── MIC ──
+function toggleMic() {
+  isRecording ? stopMic() : startMic();
+}
+function startMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Speech recognition works best in Chrome! 🌸'); return; }
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-IN';
+  recognition.onresult = (e) => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+      else interim += e.results[i][0].transcript;
+    }
+    if (final) {
+      const ta = document.getElementById('write-area');
+      ta.value += final;
+      autoResize(ta);
+    }
+    document.getElementById('transcript').textContent = interim ? '🎙️ ' + interim : '';
+  };
+  recognition.onerror = stopMic;
+  recognition.onend = () => { if (isRecording) recognition.start(); };
+  recognition.start();
+  isRecording = true;
+  const btn = document.getElementById('mic-btn');
+  btn.classList.add('rec');
+  btn.innerHTML = `<svg viewBox="0 0 24 24"><path fill="white" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.06 7.44-7 7.93V20h4v2H8v-2h4v-2.07z"/></svg><span class="live-badge">live</span>`;
+}
+function stopMic() {
+  if (recognition) { recognition.stop(); recognition = null; }
+  isRecording = false;
+  document.getElementById('mic-btn').classList.remove('rec');
+  document.getElementById('mic-btn').innerHTML = `<svg viewBox="0 0 24 24"><path fill="white" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.06 7.44-7 7.93V20h4v2H8v-2h4v-2.07z"/></svg>`;
+  document.getElementById('transcript').textContent = '';
+}
+
+// ── SAVE / LOAD ──
+function collectCanvasItems() {
+  const items = [];
+  document.querySelectorAll('#canvas .canvas-item').forEach(div => {
+    const type = div.dataset.type;
+    const base = { type, x: parseFloat(div.style.left), y: parseFloat(div.style.top), transform: div.style.transform };
+    if (type === 'sticker') items.push({...base, value: div.dataset.value});
+    else if (type === 'sticky') {
+      items.push({...base, bg: div.dataset.bg, color: div.dataset.color, text: div.querySelector('.sticky-note').textContent});
+    } else if (type === 'washi') {
+      items.push({...base, washiIdx: parseInt(div.dataset.washiIdx)});
+    } else if (type === 'photo') {
+      items.push({...base, src: div.dataset.src, caption: div.querySelector('.polaroid-caption').textContent});
+    } else if (type === 'text') {
+      items.push({...base, text: div.querySelector('.text-el').textContent});
+    }
+  });
+  return items;
+}
+
+function restoreItem(item) {
+  const canvas = document.getElementById('canvas');
+  const div = makeItem(item.type, item.x, item.y);
+  if (item.transform) div.style.transform = item.transform;
+  if (item.type === 'sticker') {
+    div.dataset.value = item.value;
+    const el = document.createElement('span');
+    el.className = 'sticker-el'; el.textContent = item.value;
+    div.appendChild(el);
+  } else if (item.type === 'sticky') {
+    div.dataset.bg = item.bg; div.dataset.color = item.color;
+    const note = document.createElement('div');
+    note.className = 'sticky-note';
+    note.style.background = item.bg; note.style.color = item.color;
+    note.contentEditable = 'true'; note.textContent = item.text;
+    note.onclick = (e) => { e.stopPropagation(); note.focus(); };
+    div.appendChild(note);
+  } else if (item.type === 'washi') {
+    div.dataset.washiIdx = item.washiIdx;
+    div.style.left = '0';
+    const el = document.createElement('div');
+    el.className = 'washi-el';
+    const rect = canvas.getBoundingClientRect();
+    el.style.width = rect.width + 'px';
+    el.style.background = WASHI[item.washiIdx].style;
+    div.appendChild(el);
+  } else if (item.type === 'photo') {
+    div.dataset.src = item.src;
+    const frame = document.createElement('div');
+    frame.className = 'polaroid-frame';
+    const img = document.createElement('img');
+    img.src = item.src; img.style.maxWidth='140px'; img.style.maxHeight='120px'; img.style.display='block';
+    const cap = document.createElement('div');
+    cap.className = 'polaroid-caption'; cap.contentEditable='true'; cap.textContent = item.caption || '';
+    cap.onclick = (e) => e.stopPropagation();
+    frame.appendChild(img); frame.appendChild(cap);
+    div.appendChild(frame);
+  } else if (item.type === 'text') {
+    const el = document.createElement('div');
+    el.className = 'text-el'; el.contentEditable='true'; el.textContent = item.text;
+    el.onclick = (e) => e.stopPropagation();
+    div.appendChild(el);
+  }
+  canvas.appendChild(div);
+}
+
+function saveEntry() {
+  const text = document.getElementById('write-area').value.trim();
+  const title = document.getElementById('entry-title').value.trim();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-IN', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const timeStr = now.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+  const canvasItems = collectCanvasItems();
+  const firstPhoto = canvasItems.find(i => i.type === 'photo');
+  const entry = {
+    id: currentEntry ? currentEntry.id : Date.now(),
+    title, text, mood: currentMood, theme: currentTheme,
+    date: dateStr, time: timeStr,
+    canvasItems,
+    thumb: firstPhoto ? firstPhoto.src : null,
+    updatedAt: Date.now()
+  };
+  if (currentEntry) {
+    const idx = entries.findIndex(e => e.id === currentEntry.id);
+    if (idx > -1) entries[idx] = entry;
+  } else {
+    entries.unshift(entry);
+  }
+  localStorage.setItem('inkpetal_entries', JSON.stringify(entries));
+  stopMic();
+  renderEntries();
+  showView('home');
+}
+
+function deleteEntry(id, e) {
+  e.stopPropagation();
+  if (!confirm('delete this entry? 🥺')) return;
+  entries = entries.filter(x => x.id !== id);
+  localStorage.setItem('inkpetal_entries', JSON.stringify(entries));
+  renderEntries();
+}
+
+function renderEntries() {
+  const grid = document.getElementById('entries-grid');
+  if (!entries.length) {
+    grid.innerHTML = `<div class="empty-home"><div class="bigmoji">📖</div><p>your journal is empty!</p><small>tap + new to write your first entry 🌸</small></div>`;
+    return;
+  }
+  grid.innerHTML = entries.map(e => `
+    <div class="entry-card" onclick="editEntry(${e.id})">
+      <div class="card-tape"></div>
+      <div class="card-date">📅 ${e.date} · ${e.time}</div>
+      <div class="card-text">${escHtml(e.text || '').replace(/\n/g,'<br>')}</div>
+      ${e.mood ? `<span class="card-mood">${e.mood}</span>` : ''}
+      ${e.thumb ? `<img class="card-thumb" src="${e.thumb}" alt="photo">` : ''}
+      <div class="card-actions">
+        ${e.title ? `<span style="font-family:'Caveat',cursive;font-size:14px;color:var(--muted);flex:1">📌 ${escHtml(e.title)}</span>` : ''}
+        <button class="card-btn" title="edit" onclick="event.stopPropagation();editEntry(${e.id})">✏️</button>
+        <button class="card-btn" title="delete" onclick="deleteEntry(${e.id},event)">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── PANELS ──
+function openPanel(name) {
+  document.querySelectorAll('.panel-overlay').forEach(p => p.classList.remove('open'));
+  document.getElementById('panel-'+name).classList.add('open');
+}
+function closePanels(e) {
+  if (e.target.classList.contains('panel-overlay')) closeAllPanels();
+}
+function closeAllPanels() {
+  document.querySelectorAll('.panel-overlay').forEach(p => p.classList.remove('open'));
+}
+
+// ── EXPORT ──
+function exportAll() {
+  if (!entries.length) { alert('No entries to export yet! 🌸'); return; }
+  let txt = '🌸 inkpetal journal 🌸\n' + '═'.repeat(36) + '\n\n';
+  entries.forEach(e => {
+    txt += `📅 ${e.date} at ${e.time}\n`;
+    if (e.title) txt += `📌 ${e.title}\n`;
+    if (e.mood) txt += `Mood: ${e.mood}\n`;
+    txt += '\n' + (e.text || '') + '\n\n' + '─'.repeat(30) + '\n\n';
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], {type:'text/plain'}));
+  a.download = 'inkpetal-journal.txt';
+  a.click();
+}
+
+renderEntries();
+</script>
+</body>
+</html>
